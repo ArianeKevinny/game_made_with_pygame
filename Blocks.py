@@ -1,31 +1,31 @@
 import pygame
 import random
 
-class Block: # Essa classe representa 1 bloco, mas um conjunto de blocos jutntos
-    num = 0 # número de blocos
-    pos_top = [] # posição dos blocos superiores
-    pos_bottom = [] # Posição dos blocos inferiores
-    # Ainda vou implementar um modo que muda os blocos e o background de acordo com o modo escolhido
-    mode = "forest"
-    t_left = pygame.image.load("img/"+mode+"/t_left.png")
-    t_right = pygame.image.load("img/"+mode+"/t_right.png")
-    t_middle = pygame.image.load("img/"+mode+"/t_middle.png")
-    t_single = pygame.image.load("img/"+mode+"/t_single.png")
-    b_left = pygame.image.load("img/"+mode+"/b_left.png")
-    b_right = pygame.image.load("img/"+mode+"/b_right.png")
-    b_middle = pygame.image.load("img/"+mode+"/b_middle.png")
-    b_single = pygame.image.load("img/"+mode+"/b_single.png")
+class Block:
+    num = 0
+    pos_top = []
+    pos_bottom = []
     create_other = False
     delete = False
     snowflake = pygame.image.load("img/snowflake.png")
     pos_snow = []
 
-    def __init__(self):
+    def __init__(self, mode):
+        self.mode = mode
+        self.t_left = pygame.image.load("img/" + mode + "/t_left.png")
+        self.t_right = pygame.image.load("img/" + mode + "/t_right.png")
+        self.t_middle = pygame.image.load("img/" + mode + "/t_middle.png")
+        self.t_single = pygame.image.load("img/" + mode + "/t_single.png")
+        self.b_left = pygame.image.load("img/" + mode + "/b_left.png")
+        self.b_right = pygame.image.load("img/" + mode + "/b_right.png")
+        self.b_middle = pygame.image.load("img/" + mode + "/b_middle.png")
+        self.b_single = pygame.image.load("img/" + mode + "/b_single.png")
+
         y_top = 408
         y_bottom = 444
         p_top = []
         p_bottom = []
-        self.num = random.randint(1, 5) # O número de blocos é escolhido aleatoriamente entre 1 a 5 blocos num conjunto
+        self.num = random.randint(1, 5)
         for i in range(self.num):
             p_top.append([640 + i * 32, y_top])
             p_bottom.append([640 + i * 32, y_bottom])
@@ -65,7 +65,8 @@ class Block: # Essa classe representa 1 bloco, mas um conjunto de blocos jutntos
                 screen.blit(self.b_middle, self.pos_bottom[i])
             self.pos_top[i] = [self.pos_top[i][0] - 1, self.pos_top[i][1]]
             self.pos_bottom[i] = [self.pos_bottom[i][0] - 1, self.pos_bottom[i][1]]
-            #self.snowing(screen)
+            if self.mode == "ice":
+                self.snowing(screen)
             if i == self.num - 1:
                 if self.pos_top[i][0] <= 560:
                     self.create_other = True
