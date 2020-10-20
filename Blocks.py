@@ -14,7 +14,7 @@ class Block:
         self.mode = mode  # Representa o tipo de blocos, background e obstáculos
         # De acordo com o modo, os obstáculos se alteram
         if mode == "ice":
-            type_obst = ["ice rock", "snowman"]
+            type_obst = ["ice rock", "snowman", "sign"]
             self.pos_snow = []  # Lista com a posição dos flocos de neve
             # Cria 80 flocos de neve em posições aleatórias
             for j in range(80):
@@ -32,8 +32,8 @@ class Block:
         self.b_right = pygame.image.load("img/" + mode + "/b_right.png")
         self.b_middle = pygame.image.load("img/" + mode + "/b_middle.png")
         self.b_single = pygame.image.load("img/" + mode + "/b_single.png")
-        y_top = 408  # Altura que são gerados os blocos no topo
-        y_bottom = 444  # Altura que são gerados os blocos no topo
+        y_top = 400  # Altura que são gerados os blocos no topo
+        y_bottom = 440  # Altura que são gerados os blocos no topo
         self.num_blocks = random.randint(1, 5)  # Escolhe aleatoriamente o número de blocos que o conjunto terá
         if self.num_blocks > 2:
             obst_num = random.randint(1, self.num_blocks - 2)  # Indica o bloco que vai ficar o obstáculo
@@ -41,10 +41,10 @@ class Block:
             self.obst = pygame.image.load("img/obst/"+type_obst[obst_ind]+".png")  # Representa a imagem do obstáculo
         for i in range(0, self.num_blocks):  # Insere as posições dos blocos dentro de uma lista
             # Obs: Os blocos sempre surgem da borda direita da tela
-            self.pos_t.append([640 + (i * 36), y_top])
-            self.pos_b.append([640 + (i * 36), y_bottom])
+            self.pos_t.append([600 + (i * 40), y_top])
+            self.pos_b.append([600 + (i * 40), y_bottom])
             if self.num_blocks > 2 and i == obst_num:  # Insere a posição do obstáculo
-                self.obst_pos = [type_obst[obst_ind], 640 + (i * 32), y_top - self.obst.get_height()]
+                self.obst_pos = [type_obst[obst_ind], 600 + (i * 40), y_top - self.obst.get_height()]
                 if type_obst[obst_ind] == "cannon":
                     self.pos_cannonball = []
                 elif type_obst[obst_ind] == "bee":
@@ -60,24 +60,24 @@ class Block:
             self.pos_snow[i][0] += 0.3  # Velocidade vertical
             self.pos_snow[i][1] += 0.2  # Velocidade horizontal
             # Deleta um floco depois que ele saiu da tela ...
-            if self.pos_snow[i][0] >= 650 or self.pos_snow[i][1] >= 490:
+            if self.pos_snow[i][0] >= 610 or self.pos_snow[i][1] >= 490:
                 self.pos_snow.pop(i)
                 # ... e adiciona outro no lugar
-                self.pos_snow.append([random.randint(0, 620), random.randint(0, 620)])
+                self.pos_snow.append([random.randint(0, 590), random.randint(0, 590)])
             i += 1  # É o contador que permite que todos os flocos sejam movidos
 
     def show(self, screen):
         # A abelha se movimenta mais rápido que o resto dos dos obstáculos
         # Depois tenho que implementar a abelha subir e descer
-        print(self.num_blocks)
-        if self.num_blocks > 2 and self.obst_pos[0] == "bee":
+        if 5 >= self.num_blocks > 2 and self.obst_pos[0] == "bee":
             screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))
-            self.obst_pos[1] -= 2
-            if self.obst_pos[2] > 380:
-                self.obst_pos[3] = -0.5
-            elif self.obst_pos[2] < 330:
-                self.obst_pos[3] = 0.5
-            self.obst_pos[2] += self.obst_pos[3]
+            self.obst_pos[1] -= random.randint(1, 3)
+            if self.obst_pos[1] > -10:
+                if self.obst_pos[2] > 380:
+                    self.obst_pos[3] = - random.random()
+                elif self.obst_pos[2] < 330:
+                    self.obst_pos[3] = random.random()
+                self.obst_pos[2] += self.obst_pos[3]
         # Mostra todos o blocos
         for i in range(self.num_blocks):
             if i == 0 and self.num_blocks > 1:
@@ -98,7 +98,7 @@ class Block:
             if self.mode == "ice":  # Caso o modo seja de neve, irá nevar
                 self.snowing(screen)
             # Movimenta o obstáculo
-            if self.num_blocks > 2 and self.obst_pos[1] == self.pos_t[i][0] + 1 and self.obst_pos[0] != "bee":
+            if 5 >= self.num_blocks > 2 and self.obst_pos[1] == self.pos_t[i][0] + 1 and self.obst_pos[0] != "bee":
                 screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))
                 self.obst_pos[1] -= 1
                 if self.obst_pos[0] == "cannon":  # Especifica o comportamento da bola que ele atira
@@ -111,7 +111,7 @@ class Block:
             if i == self.num_blocks - 1:
                 # A distância de um conjunto de blocos para outro é de 80px
                 # Caso chegue essa distância, ele permite criar outro conjunto de blocos
-                if self.pos_t[i][0] <= 560:
+                if self.pos_t[i][0] <= 520:
                     self.create_other = True
                 # Quando o conjunto de blocos sai da tela, então permite deletar o conjunto de blocos
                 if self.pos_t[i][0] <= -40:
