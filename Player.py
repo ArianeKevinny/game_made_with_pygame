@@ -8,7 +8,6 @@ altura_Y = 480 # altura da tela
 bloco = 60 # Tamanho de cada tile (tile é bloco) 
 personagem_X = bloco
 personagem_Y = int(bloco * 1.33)
-
 branco = (255, 255, 255)
 preto = (0, 0, 0)
 
@@ -158,7 +157,7 @@ def game_screen(screen):
     state = n_sair
     while state != sair:
         clock.tick(60)
-       for event in pygame.event.get():
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 state = sair
             if event.type == pygame.KEYDOWN:
@@ -174,7 +173,6 @@ def game_screen(screen):
                     player.speedx += SPEED_X
                 elif event.key == pygame.K_RIGHT:
                     player.speedx -= SPEED_X
-
         all_sprites.update()
         screen.fill(BRANCO)
         all_sprites.draw(screen)
