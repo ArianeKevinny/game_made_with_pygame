@@ -2,16 +2,25 @@ import pygame
 import math
 from Blocks import Block
 from PIL import Image
+import sys
 
 frames = {"galinha": 0, "pinguim": 0, "homem": 0, "mulher": 0}
 
+pos_heart = [(20, 10), (80, 10), (140, 10)]
 
 # Cria um retângulo com um certo nível trasnparência
-def transp_rec(width, height, color, trasnparency):
+def transp_rec(width, height, color, transparency):
     m = pygame.Surface((width, height))  # Cria um retângulo
-    m.set_alpha(trasnparency)  # Adiciona a transparência nele
-    m.fill(color)  # Adiciona a trasnparência nele
+    m.set_alpha(transparency)  # Adiciona a transparência nele
+    m.fill(color)  # Adiciona a transparência nele
     return m
+
+# Mostra o número de vidas, utilizando corações
+def show_hearts(screen, lives):
+    heart = pygame.image.load("img/heart.png")
+    for i in range(0, lives):
+        screen.blit(heart, pos_heart[i])
+
 
 
 # Faz o primeiro bloco, que tem um tamanho maior que a maioria
@@ -30,16 +39,23 @@ def first_block(mode):
 
 
 # Faz o efeito em que o cenário também se move dando uma sensação de movimento
-def paralax(screen, background, background_pos):
+def paralax(screen, background, background_pos, speed = 1):
     # A função cria dois papeis de paredes, que vão alternando, quando o primeiro sai da tela, ele é
     # reposicionado atrás do segundo
-    screen.blit(background, background_pos[1])
-    screen.blit(background, background_pos[2])
-    background_pos[1][0] += 1
-    background_pos[2][0] += 1
-    if background_pos[1][0] == background_pos[0]:
-        background_pos.pop(1)
-        background_pos.append([-background_pos[0], 0])
+        screen.blit(background, background_pos[1])
+        screen.blit(background, background_pos[2])
+        if speed:
+            background_pos[1][0] += speed
+            background_pos[2][0] += speed
+            print(background_pos, -1*(speed * math.ceil(background_pos[0]/speed)), background_pos[1][0] == -1*(speed * math.ceil(background_pos[0]/speed)))
+            if speed > 0:
+                if background_pos[1][0] == (speed * math.ceil(background_pos[0]/speed)):
+                    background_pos.pop(1)
+                    background_pos.append([-background_pos[0], 0])
+            else:
+                if background_pos[1][0] == -1*(speed * math.ceil(background_pos[0]/speed)):
+                    background_pos.pop(1)
+                    background_pos.append([background_pos[0], 0])
 
 
 # Código que eu peguei no stackoverflow para conseguir executar gifs, separando-os em frames
@@ -84,9 +100,67 @@ def button(screen, text, x_button, y_button):
     posX_test = 50 - math.ceil(text_width / 2) # Posiciona o texto centralizado no botão
     screen.blit(text, (x_button + posX_test, y_button + 2))  # Mostra o texto
 
+# Faz a intro
+def intro(screen):
+    CLOCK = pygame.time.Clock()
+    bg = pygame.image.load("img/introducao/intro.png").convert()
+    bg_pos = [853, [0, 0], [853, 0]]
+    bgWidth, bgHeight = bg.get_rect().size
+    running = True
+    stageWidth = bgWidth * 2
+    stagePosX = 0
+    menu_transparency = 0
+    startScrollingPosX = 300
+    circleRadius = 25
+    circlePosX = circleRadius
+    playerPosX = circleRadius
+    playerPosY = 400
+    playerVelocityX = 0
+
+    mulher = [pygame.image.load('img/introducao/mulher1.png'), pygame.image.load('img/introducao/mulher2.png'),
+              pygame.image.load('img/introducao/mulher3.png'),
+              pygame.image.load('img/introducao/mulher4.png'), pygame.image.load('img/introducao/mulher5.png'),
+              pygame.image.load('img/introducao/mulher6.png'),
+              pygame.image.load('img/introducao/mulher7.png'), pygame.image.load('img/introducao/mulher8.png')]
+    walkcounter = 0
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+        pygame.time.delay(65)
+        if playerPosX > stageWidth - circleRadius + 5:  # se o jogador sai pelo limite da direita
+            paralax(screen, bg, bg_pos, 0)
+            menu = transp_rec(500, 400, (230, 239, 255), menu_transparency)
+            screen.blit(menu, (60, 50))
+            menu_transparency += 5
+            if menu_transparency == 125:
+                running = False
+        else:
+            paralax(screen, bg, bg_pos, -1)
+            if walkcounter + 1 >= 8:
+                walkcounter = 0
+            playerPosX += 17
+            walkcounter += 1
+            if playerPosX < circleRadius: playerPosX = circleRadius
+            if playerPosX < startScrollingPosX:
+                circlePosX = playerPosX
+            elif playerPosX > stageWidth - startScrollingPosX:
+                circlePosX = playerPosX - stageWidth + 600
+            else:
+                circlePosX = startScrollingPosX
+                stagePosX += -playerVelocityX
+
+            rel_x = stagePosX % bgWidth
+            # screen.blit(bg, (rel_x - bgWidth, 0))
+            screen.blit(mulher[walkcounter], (circlePosX - 38, playerPosY - 200))
+        pygame.display.update()
+        CLOCK.tick(500)
+    return bg_pos
+
 
 # Faz o menu
-def menu(screen):
+def menu(screen, background_pos):
     clock = pygame.time.Clock()
     text_char = ""
     b = True
@@ -97,7 +171,6 @@ def menu(screen):
     mediumfont = pygame.font.SysFont('cambria', 35)
     background = pygame.image.load("img/menu.png")
     background = pygame.transform.scale(background, (853, 480))
-    background_pos = [853, [0, 0], [-853, 0]]
     m = transp_rec(500, 400, (230, 239, 255), 125)  # Retângulo usado no menu
     while b:
         for event in pygame.event.get():
@@ -139,7 +212,7 @@ def menu(screen):
                     if char:
                         if 250 < pos_mouse[0] < 350 and 370 < pos_mouse[1] < 410:
                             b = False
-        paralax(screen, background, background_pos)  # Executa o paralax
+        paralax(screen, background, background_pos, -1)  # Executa o paralax
         screen.blit(m, (60, 50))
         if inicio:
             # No início mostra apenas dois botões
