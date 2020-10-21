@@ -60,7 +60,7 @@ def main():
         if player.state == "falling" and player.player_y < 480:
             player.player_y += 6  # 80 + player.char_sprite.get_height()
         pygame.display.update()
-
+    pygame.quit()
 
 if __name__ == "__main__":
     main()

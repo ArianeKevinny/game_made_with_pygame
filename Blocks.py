@@ -34,7 +34,7 @@ class Block:
         self.b_single = pygame.image.load("img/" + mode + "/b_single.png")
         y_top = 400  # Altura que são gerados os blocos no topo
         y_bottom = 440  # Altura que são gerados os blocos no topo
-        self.num_blocks = random.randint(1, 5)  # Escolhe aleatoriamente o número de blocos que o conjunto terá
+        self.num_blocks = random.randint(2, 5)  # Escolhe aleatoriamente o número de blocos que o conjunto terá
         if self.num_blocks > 2:
             obst_num = random.randint(1, self.num_blocks - 2)  # Indica o bloco que vai ficar o obstáculo
             obst_ind = random.randint(0, len(type_obst)-1)  # Indica o índice do obstáculo na lista dos obstáculos
@@ -44,7 +44,7 @@ class Block:
             self.pos_t.append([600 + (i * 40), y_top])
             self.pos_b.append([600 + (i * 40), y_bottom])
             if self.num_blocks > 2 and i == obst_num:  # Insere a posição do obstáculo
-                self.obst_pos = [type_obst[obst_ind], 600 + (i * 40), y_top - self.obst.get_height()]
+                self.obst_pos = [type_obst[obst_ind], 600 + (i * 40), y_top - self.obst.get_height(), 1]
                 if type_obst[obst_ind] == "cannon":
                     self.pos_cannonball = []
                 elif type_obst[obst_ind] == "bee":
@@ -66,12 +66,36 @@ class Block:
                 self.pos_snow.append([random.randint(0, 590), random.randint(0, 590)])
             i += 1  # É o contador que permite que todos os flocos sejam movidos
 
+    def check_obst(self, player):
+        x_player = 0
+        x_obst = 0
+        y_player = 0
+        y_obst = 0
+        #print(f"player = [{player.player}, {player}]//// obst = {self.obst_pos}")
+        # Checa se o personagem se chocou com um obstáculo
+        if self.obst_pos[0] != "cannon":
+            # O canhão não é um obstáculo em si, mas suas bolas são
+            x_player = self.obst_pos[1] < player.player_x < self.obst_pos[1] + self.obst.get_width()
+            y_player = self.obst_pos[2] < player.player_y < self.obst_pos[2] + self.obst.get_height()
+            x_obst = player.player_x < self.obst_pos[1] < player.player_x + player.char_sprite.get_width()
+            y_obst = player.player_y < self.obst_pos[2] < player.player_y + player.char_sprite.get_height()
+        else:
+            if self.pos_cannonball:
+                x_player = self.pos_cannonball[0] < player.player_x < self.pos_cannonball[0] + 27
+                y_player = self.pos_cannonball[1] < player.player_x < self.pos_cannonball[1] + 27
+                x_obst = player.player_x < self.pos_cannonball[0] < player.player_x + player.char_sprite.get_width()
+                y_obst = player.player_y < self.pos_cannonball[1] < player.player_y + player.char_sprite.get_height()
+        # Caso coincida nos dois casos, tira um vida do personagem
+        if (x_player or x_obst) and (y_player or y_obst):
+            self.obst_pos[3] = 0
+            player.lives -= 1
+
     def show(self, screen):
         # A abelha se movimenta mais rápido que o resto dos dos obstáculos
         # Depois tenho que implementar a abelha subir e descer
         if 5 >= self.num_blocks > 2 and self.obst_pos[0] == "bee":
             screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))
-            self.obst_pos[1] -= random.randint(1, 3)
+            self.obst_pos[1] -= random.randint(5, 10)
             if self.obst_pos[1] > -10:
                 if self.obst_pos[2] > 380:
                     self.obst_pos[3] = - random.random()
@@ -93,21 +117,21 @@ class Block:
                 screen.blit(self.t_middle, self.pos_t[i])
                 screen.blit(self.b_middle, self.pos_b[i])
             # Velocidade de 1px
-            self.pos_t[i] = [self.pos_t[i][0] - 1, self.pos_t[i][1]]
-            self.pos_b[i] = [self.pos_b[i][0] - 1, self.pos_b[i][1]]
-            if self.mode == "ice":  # Caso o modo seja de neve, irá nevar
-                self.snowing(screen)
+            self.pos_t[i] = [self.pos_t[i][0] - 4, self.pos_t[i][1]]
+            self.pos_b[i] = [self.pos_b[i][0] - 4, self.pos_b[i][1]]
+            #if self.mode == "ice":  # Caso o modo seja de neve, irá nevar
+            #    self.snowing(screen)
             # Movimenta o obstáculo
-            if 5 >= self.num_blocks > 2 and self.obst_pos[1] == self.pos_t[i][0] + 1 and self.obst_pos[0] != "bee":
+            if 5 >= self.num_blocks > 2 and self.obst_pos[1] == self.pos_t[i][0] + 4 and self.obst_pos[0] != "bee":
                 screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))
-                self.obst_pos[1] -= 1
+                self.obst_pos[1] -= 4
                 if self.obst_pos[0] == "cannon":  # Especifica o comportamento da bola que ele atira
                     if not self.pos_cannonball and self.obst_pos[1] <= 640 - self.obst.get_width():
                         self.pos_cannonball = [self.obst_pos[1] - 20, self.obst_pos[2]]
                     if self.pos_cannonball:
                         cannonball = pygame.image.load("img/obst/cannonball.png")
                         screen.blit(cannonball, (self.pos_cannonball[0], self.pos_cannonball[1]))
-                        self.pos_cannonball[0] -= 3
+                        self.pos_cannonball[0] -= 8
             if i == self.num_blocks - 1:
                 # A distância de um conjunto de blocos para outro é de 80px
                 # Caso chegue essa distância, ele permite criar outro conjunto de blocos
@@ -116,3 +140,21 @@ class Block:
                 # Quando o conjunto de blocos sai da tela, então permite deletar o conjunto de blocos
                 if self.pos_t[i][0] <= -40:
                     self.delete = True
+
+    def show_static(self, screen):
+        # Mostra os blocos de forma estática na posição que estavam quando o personagem morreu
+        for i in range(self.num_blocks):
+            if i == 0 and self.num_blocks > 1:
+                screen.blit(self.t_left, self.pos_t[i])
+                screen.blit(self.b_left, self.pos_b[i])
+            elif i == len(self.pos_t) - 1 and self.num_blocks > 1:
+                screen.blit(self.t_right, self.pos_t[i])
+                screen.blit(self.b_right, self.pos_b[i])
+            elif self.num_blocks == 1:
+                screen.blit(self.t_single, self.pos_t[i])
+                screen.blit(self.b_single, self.pos_b[i])
+            else:
+                screen.blit(self.t_middle, self.pos_t[i])
+                screen.blit(self.b_middle, self.pos_b[i])
+        if 5 >= self.num_blocks > 2:
+            screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))

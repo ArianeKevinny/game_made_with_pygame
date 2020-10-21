@@ -47,7 +47,6 @@ def paralax(screen, background, background_pos, speed = 1):
         if speed:
             background_pos[1][0] += speed
             background_pos[2][0] += speed
-            print(background_pos, -1*(speed * math.ceil(background_pos[0]/speed)), background_pos[1][0] == -1*(speed * math.ceil(background_pos[0]/speed)))
             if speed > 0:
                 if background_pos[1][0] == (speed * math.ceil(background_pos[0]/speed)):
                     background_pos.pop(1)
@@ -103,7 +102,7 @@ def button(screen, text, x_button, y_button):
 # Faz a intro
 def intro(screen):
     CLOCK = pygame.time.Clock()
-    bg = pygame.image.load("img/introducao/intro.png").convert()
+    bg = pygame.image.load("img/intro.png").convert()
     bg_pos = [853, [0, 0], [853, 0]]
     bgWidth, bgHeight = bg.get_rect().size
     running = True
@@ -117,11 +116,11 @@ def intro(screen):
     playerPosY = 400
     playerVelocityX = 0
 
-    mulher = [pygame.image.load('img/introducao/mulher1.png'), pygame.image.load('img/introducao/mulher2.png'),
-              pygame.image.load('img/introducao/mulher3.png'),
-              pygame.image.load('img/introducao/mulher4.png'), pygame.image.load('img/introducao/mulher5.png'),
-              pygame.image.load('img/introducao/mulher6.png'),
-              pygame.image.load('img/introducao/mulher7.png'), pygame.image.load('img/introducao/mulher8.png')]
+    mulher = [pygame.image.load('animacoes/mulher/mulher1.png'), pygame.image.load('animacoes/mulher/mulher2.png'),
+              pygame.image.load('animacoes/mulher/mulher3.png'),
+              pygame.image.load('animacoes/mulher/mulher4.png'), pygame.image.load('animacoes/mulher/mulher5.png'),
+              pygame.image.load('animacoes/mulher/mulher6.png'),
+              pygame.image.load('animacoes/mulher/mulher7.png'), pygame.image.load('animacoes/mulher/mulher8.png')]
     walkcounter = 0
     while running:
         for event in pygame.event.get():
@@ -235,13 +234,13 @@ def menu(screen, background_pos):
                 screen.blit(char_selection, pos_char)
             # Mostra os 4 personagens em movimento
             # A função utilizada retorna frame por frame, e mostra ele na tela
-            frame_galinha = insert_gif("animações/galinha.gif", 55, 60)
+            frame_galinha = insert_gif("animacoes/galinha/galinha.gif", 55, 60)
             screen.blit(frame_galinha, (100, 200))
-            frame_pinguim = insert_gif("animações/pinguim.gif", 49, 60)
+            frame_pinguim = insert_gif("animacoes/pinguim/pinguim.gif", 49, 60)
             screen.blit(frame_pinguim, (200, 200))
-            frame_homem = insert_gif("animações/homem.gif", 54, 120)
+            frame_homem = insert_gif("animacoes/homem/homem.gif", 54, 120)
             screen.blit(frame_homem, (310, 140))
-            frame_mulher = insert_gif("animações/mulher.gif", 107, 120)
+            frame_mulher = insert_gif("animacoes/mulher/mulher.gif", 107, 120)
             screen.blit(frame_mulher, (420, 140))
             mediumfont = pygame.font.SysFont('cambria', 35)
             text = mediumfont.render('Escolha seu persongem', True, (0, 0, 0))

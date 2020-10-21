@@ -28,7 +28,7 @@ class Player:
         self.player_x = 100
         self.counter = 0
         self.jump_counter = 10
-        self.char_sprite = insert_gif("animações/" + self.char + "/" + self.char +".gif", self.x_scale, self.y_scale)
+        self.char_sprite = insert_gif("animacoes/" + self.char + "/" + self.char +".gif", self.x_scale, self.y_scale)
         self.state = "still"
 
     def check_fall(self, blocks):
@@ -42,7 +42,7 @@ class Player:
 
     def show(self, screen, blocks):
         if self.counter == 5:
-            self.char_sprite = insert_gif("animações/" + self.char + ".gif", self.x_scale, self.y_scale)
+            self.char_sprite = insert_gif("animacoes/"+ self.char + "/" + self.char + ".gif", self.x_scale, self.y_scale)
             self.counter = 0
         else:
             if self.state != "jumping":
