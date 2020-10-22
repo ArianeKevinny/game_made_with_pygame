@@ -2,8 +2,6 @@ import pygame
 from functions import *
 from MyPlayer import Player
 
-pos_heart = [(), (), ()]
-
 
 def main():
     pygame.init()  # Inicia o jogo
@@ -71,8 +69,8 @@ def main():
                 if blocks[0].delete:
                     del blocks[0]
             player.check_fall(blocks) # Checa se o jogador caiu
-        else:
-                defeated_menu(screen)
+        if player.lives <= 0 or (player.state == "falling" and player.player_y > 480):
+            defeated_menu(screen)
         if player.state == "falling" and player.player_y < 480:
             player.player_y += 6  # 80 + player.char_sprite.get_height()
         pygame.display.update()
