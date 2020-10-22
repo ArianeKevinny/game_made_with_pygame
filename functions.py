@@ -88,16 +88,17 @@ def insert_gif(path, x_scale=0, y_scale=0):
 
 
 # Cria um botão (Com tamanho fixo)
-def button(screen, text, x_button, y_button):
-    smallfont = pygame.font.SysFont('Corbel', 35)  # Define a fonte
+def button(screen, text, x_button, y_button, font_size = 35):
+    smallfont = pygame.font.SysFont('Corbel', font_size)  # Define a fonte
     text = smallfont.render(text, True, (0, 0, 0))  # Cria o texto
     pygame.draw.rect(screen, (0, 0, 0), [x_button - 2, y_button - 2, 104, 44])  # Cria um retângulo preto
     # para servir de contorno
     pygame.draw.rect(screen, (255, 51, 51), [x_button, y_button, 100, 40])  # Cria o retângulo que será o
     # botão
     text_width = text.get_width()
+    posY_test = 20 - math.ceil(font_size / 2)
     posX_test = 50 - math.ceil(text_width / 2) # Posiciona o texto centralizado no botão
-    screen.blit(text, (x_button + posX_test, y_button + 2))  # Mostra o texto
+    screen.blit(text, (x_button + posX_test, y_button + posY_test))  # Mostra o texto
 
 # Faz a intro
 def intro(screen):
@@ -136,10 +137,10 @@ def intro(screen):
             if menu_transparency == 125:
                 running = False
         else:
-            paralax(screen, bg, bg_pos, -1)
+            paralax(screen, bg, bg_pos, -8)
             if walkcounter + 1 >= 8:
                 walkcounter = 0
-            playerPosX += 17
+            playerPosX += 20
             walkcounter += 1
             if playerPosX < circleRadius: playerPosX = circleRadius
             if playerPosX < startScrollingPosX:
@@ -240,8 +241,8 @@ def menu(screen, background_pos):
             screen.blit(frame_pinguim, (200, 200))
             frame_homem = insert_gif("animacoes/homem/homem.gif", 54, 120)
             screen.blit(frame_homem, (310, 140))
-            frame_mulher = insert_gif("animacoes/mulher/mulher.gif", 107, 120)
-            screen.blit(frame_mulher, (420, 140))
+            frame_mulher = insert_gif("animacoes/mulher/mulher.gif", 89, 100) # (107, 120)
+            screen.blit(frame_mulher, (420, 160))
             mediumfont = pygame.font.SysFont('cambria', 35)
             text = mediumfont.render('Escolha seu persongem', True, (0, 0, 0))
             shadow = mediumfont.render('Escolha seu persongem', True, (153, 153, 153))
@@ -250,3 +251,13 @@ def menu(screen, background_pos):
             clock.tick(10)
         pygame.display.update()
     return mode, char  # A função retorna o modo do jogo e o personagem escolhido
+
+def defeated_menu(screen):
+    font = pygame.font.SysFont('Arial', 80)  # Define a fonte
+    text = font.render("Você perdeu!", True, (0, 0, 0))
+    # print(text.get_width())
+    m = transp_rec(500, 400, (230, 239, 255), 100)
+    screen.blit(m, (60, 50))
+    screen.blit(text, (109, 100))
+    button(screen, "Reiniciar", 110, 300, 26)
+    button(screen, "Sair", 400, 300)

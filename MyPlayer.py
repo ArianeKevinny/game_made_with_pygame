@@ -10,17 +10,17 @@ class Player:
         self.char = char  # Armazena o nome do personagem escolhido
         # Cada personagem possui um tamanho específico como também uma posição, baseada na altura
         if self.char == "galinha":
-            self.player_y = 368
-            self.original_y = 368
+            self.player_y = 365
+            self.original_y = 365
             [self.x_scale, self.y_scale] = [36, 40]
         elif self.char == "pinguim":
             self.player_y = 364
             self.original_y = 364
             [self.x_scale, self.y_scale] = [32, 40]
         elif self.char == "mulher":
-            self.player_y = 328
-            self.original_y = 328
-            [self.x_scale, self.y_scale] = [72, 80]
+            self.player_y = 344
+            self.original_y = 344
+            [self.x_scale, self.y_scale] = [54, 60]
         else:
             self.player_y = 332
             self.original_y = 332
@@ -45,7 +45,7 @@ class Player:
             self.char_sprite = insert_gif("animacoes/"+ self.char + "/" + self.char + ".gif", self.x_scale, self.y_scale)
             self.counter = 0
         else:
-            if self.state != "jumping":
+            if self.state == "still" and self.lives > 0:
                 self.counter += 1
         screen.blit(self.char_sprite, (self.player_x, self.player_y))
         if self.state == "jumping":
