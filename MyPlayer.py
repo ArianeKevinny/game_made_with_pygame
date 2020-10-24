@@ -55,6 +55,8 @@ class Player:
             else:
                 self.jump_counter = 10
                 self.state = "still"
+        if self.lives <= 0 or (self.state == "falling" and self.player_y > 480):
+            self.state = "dead"
 
     def jump(self):
         if self.state == "still":
