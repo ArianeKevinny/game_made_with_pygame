@@ -5,6 +5,7 @@ import pygame
 # Classe que comanda os personagens
 class Player:
     lives = 3
+    num_stars = 0
 
     def __init__(self, char):
         self.char = char  # Armazena o nome do personagem escolhido
@@ -25,14 +26,15 @@ class Player:
             self.player_y = 332
             self.original_y = 332
             [self.x_scale, self.y_scale] = [37, 80]
-        self.player_x = 100
+        self.player_x = 100  # Posição do personagem no eixo X
         self.counter = 0
-        self.jump_counter = 10
+        self.jump_counter = 12
         self.char_sprite = insert_gif("animacoes/" + self.char + "/" + self.char +".gif", self.x_scale, self.y_scale)
         self.state = "still"
 
     def check_fall(self, blocks):
-        # print(self.state)
+        """Função serve para checar se há algum bloco abaixo do personagem, se olhar todos os blocos e a posição do
+        personagem não bater com nenhum bloco, então o personagem irá cair. """
         if self.state == "still" and self.player_y == self.original_y:
             self.state = "falling"
             for block in blocks:
@@ -41,6 +43,7 @@ class Player:
                         self.state = "still"
 
     def show(self, screen, blocks):
+        """Função para mostrar o personagem, alterando os frames do gif e executando o pulo"""
         if self.counter == 5:
             self.char_sprite = insert_gif("animacoes/"+ self.char + "/" + self.char + ".gif", self.x_scale, self.y_scale)
             self.counter = 0
@@ -49,15 +52,16 @@ class Player:
                 self.counter += 1
         screen.blit(self.char_sprite, (self.player_x, self.player_y))
         if self.state == "jumping":
-            if self.jump_counter >= -10:
-                self.player_y -= (self.jump_counter * abs(self.jump_counter)) * 0.3
+            if self.jump_counter >= -12:
+                self.player_y -= round((self.jump_counter * abs(self.jump_counter)) * 0.2)
                 self.jump_counter -= 1
             else:
-                self.jump_counter = 10
+                self.jump_counter = 12
                 self.state = "still"
         if self.lives <= 0 or (self.state == "falling" and self.player_y > 480):
             self.state = "dead"
 
     def jump(self):
+        """Função para pular"""
         if self.state == "still":
             self.state = "jumping"
