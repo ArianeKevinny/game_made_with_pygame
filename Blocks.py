@@ -8,6 +8,7 @@ class Block:
     delete = False  # Indica se pode deletar o conjunto de blocos
     blocks_made = [0, [5, 10, 15]]
     have_star = False
+
     def __init__(self, mode):
         self.pos_t = []
         self.pos_b = []
@@ -15,6 +16,7 @@ class Block:
         self.obst_pos = []
         self.mode = mode  # Representa o tipo de blocos, background e obstáculos
         self.blocks_made[0] += 1
+        print(self.blocks_made)
         # De acordo com o modo, os obstáculos se alteram
         if mode == "ice":
             type_obst = ["ice rock", "snowman", "sign"]
@@ -187,5 +189,5 @@ class Block:
             else:
                 screen.blit(self.t_middle, self.pos_t[i])
                 screen.blit(self.b_middle, self.pos_b[i])
-        if 5 >= self.num_blocks > 2:
+        if self.obst_pos:
             screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))

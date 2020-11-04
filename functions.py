@@ -6,7 +6,7 @@ import sys
 
 frames = {"galinha": 0, "pinguim": 0, "homem": 0, "mulher": 0}
 pos_heart = [(20, 10), (80, 10), (140, 10)]
-pos_star = [(460, 10), (520, 10), (580, 10)]
+pos_star = [(420, 10), (480, 10), (540, 10)]
 
 
 # Cria um retângulo com um certo nível trasnparência
@@ -261,8 +261,27 @@ def defeated_menu(screen):
     button(screen, "Voltar ao menu", 265, 300, 15)
     button(screen, "Sair", 400, 300)
 
-def advice_menu(screen):
-    font = pygame.font.SysFont('Arial', 80)  # Define a fonte
-    text1 = font.render("Para pular aperte a seta \npara cima ou espaço.", True, (0, 0, 0))
-    text2 = font.render("Você completa o nível quando \npegar todas as estrelas.", True, (0, 0, 0))
-    print(text1.get_width(), text2.get_width())
+def advice_menu(screen, bg_pos):
+    going = True
+    background = pygame.image.load("img/menu.png")
+    background = pygame.transform.scale(background, (853, 480))
+    menu = transp_rec(400, 205, (255, 255, 255), 130)
+    font = pygame.font.SysFont('Arial', 15)  # Define a fonte
+    text = [font.render("O objetivo do jogo é coletar todas as estrelas no três niveis.", True, (0, 0, 0)),
+            font.render("Para  pular aperte espaço ou seta para cima", True, (0, 0, 0)),
+            font.render("Aperte qualquer tecla para iniciar o jogo...", True, (0, 0, 0))]
+    pos = [(139, 158), (190, 233), (186, 308)]
+    while going:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                going = False
+        paralax(screen, background, bg_pos, -1)
+        screen.blit(menu, (100, 138))
+        for i in range(3):
+            screen.blit(text[i], pos[i])
+        pygame.display.update()
+
+
+

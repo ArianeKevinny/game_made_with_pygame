@@ -11,7 +11,6 @@ def main():
     blocks = []  # Lista em que serão armazenados os blocos que aparecem na tela
     pygame.display.set_caption("Teste")  # Título do jogo
     screen = pygame.display.set_mode((600, 480))  # Tamanho da tela
-    advice_menu(screen)
     bg_pos = intro(screen)  # Mostra a introdução
     while running:
         if pre_game:
@@ -30,6 +29,7 @@ def main():
                 blocks.append(first_block(mode))  # O primeiro bloco é maior que a maioria
                 pre_game = False
                 game = True
+                advice_menu(screen, bg_pos)
             else:  # Caso se feche o programa no menu, a função retorna "", e isso indica que o resto do programa
                 # não deve ser rodado
                 running = False
@@ -51,6 +51,7 @@ def main():
                             # Reseta o estado e as vidas do personagem
                             player.state = "still"
                             player.lives = 3
+                            player.num_stars
                             player.player_y = player.original_y
                         elif 265 < pos_mouse[0] < 365 and 300 < pos_mouse[1] < 340:
                             game = False
