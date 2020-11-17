@@ -6,7 +6,7 @@ class Block:
     num_blocks = 0  # Indica o número de blocos no conjunto de blocos
     create_other = False  # Indica se pode criar outro conjunto de blocos
     delete = False  # Indica se pode deletar o conjunto de blocos
-    blocks_made = [0, [5, 10, 15]]
+    blocks_made = [0, [20, 35, 50]]
     have_star = False
 
     def __init__(self, mode):
@@ -16,7 +16,6 @@ class Block:
         self.obst_pos = []
         self.mode = mode  # Representa o tipo de blocos, background e obstáculos
         self.blocks_made[0] += 1
-        print(self.blocks_made)
         # De acordo com o modo, os obstáculos se alteram
         if mode == "ice":
             type_obst = ["ice rock", "snowman", "sign"]
@@ -120,7 +119,8 @@ class Block:
             self.have_star = False
             player.num_stars += 1
 
-    def show(self, screen):
+    def show(self, screen, player):
+        speed = 3 + player.nivel
         # A abelha se movimenta mais rápido que o resto dos dos obstáculos
         # Depois tenho que implementar a abelha subir e descer
         if self.obst_pos and self.obst_pos[0] == "bee":
@@ -146,25 +146,25 @@ class Block:
             else:
                 screen.blit(self.t_middle, self.pos_t[i])
                 screen.blit(self.b_middle, self.pos_b[i])
-            # Velocidade de 1px
-            self.pos_t[i] = [self.pos_t[i][0] - 4, self.pos_t[i][1]]
-            self.pos_b[i] = [self.pos_b[i][0] - 4, self.pos_b[i][1]]
+            # Velocidade de 4px
+            self.pos_t[i] = [self.pos_t[i][0] - speed, self.pos_t[i][1]]
+            self.pos_b[i] = [self.pos_b[i][0] - speed, self.pos_b[i][1]]
             #if self.mode == "ice":  # Caso o modo seja de neve, irá nevar
             #    self.snowing(screen)
             # Movimenta o obstáculo
-            if self.obst_pos and self.obst_pos[1] == self.pos_t[i][0] + 4 and self.obst_pos[0] != "bee":
+            if self.obst_pos and self.obst_pos[1] == self.pos_t[i][0] + speed and self.obst_pos[0] != "bee":
                 screen.blit(self.obst, (self.obst_pos[1], self.obst_pos[2]))
-                self.obst_pos[1] -= 4
+                self.obst_pos[1] -= speed
                 if self.obst_pos[0] == "cannon":  # Especifica o comportamento da bola que ele atira
                     if not self.pos_cannonball and self.obst_pos[1] <= 640 - self.obst.get_width():
                         self.pos_cannonball = [self.obst_pos[1] - 20, self.obst_pos[2]]
                     if self.pos_cannonball:
                         cannonball = pygame.image.load("img/obst/cannonball.png")
                         screen.blit(cannonball, (self.pos_cannonball[0], self.pos_cannonball[1]))
-                        self.pos_cannonball[0] -= 8
-            if self.have_star and self.star_pos[0] == self.pos_t[i][0] + 4:
+                        self.pos_cannonball[0] -= 8 - player.nivel
+            if self.have_star and self.star_pos[0] == self.pos_t[i][0] + speed:
                 screen.blit(self.star, (self.star_pos[0], self.star_pos[1]))
-                self.star_pos[0] -= 4
+                self.star_pos[0] -= speed
             if i == self.num_blocks - 1:
                 # A distância de um conjunto de blocos para outro é de 80px
                 # Caso chegue essa distância, ele permite criar outro conjunto de blocos

@@ -6,6 +6,7 @@ import pygame
 class Player:
     lives = 3
     num_stars = 0
+    nivel = 1
 
     def __init__(self, char):
         self.char = char  # Armazena o nome do personagem escolhido

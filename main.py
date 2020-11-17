@@ -1,5 +1,6 @@
 import pygame
 from functions import *
+from menus import *
 from MyPlayer import Player
 
 
@@ -14,7 +15,7 @@ def main():
     bg_pos = intro(screen)  # Mostra a introdução
     while running:
         if pre_game:
-            [mode, char] = menu(screen, bg_pos)  # Função que mostra o menu
+            [mode, char] = menu_beginning(screen, bg_pos)  # Função que mostra o menu
             if mode:
                 player = Player(char)  # Inicia o personagem 
                 # Os papéis de parede possuem diferentes tamanhos, então é preciso adaptar o tamanho para cada um deles
@@ -42,16 +43,24 @@ def main():
                     if event.key == pygame.K_UP or event.key == pygame.K_SPACE:  # ...checa se é para cima ou espaço...
                         if player.lives > 0:  # ...e se tiver mais de 0 vidas...
                             player.jump()  # ...ele pula.
+                    if player.num_stars == 1:
+                        blocks = [first_block(mode)]
+                        player.lives = 3
+                        player.num_stars = 0
+                        player.nivel += 1
+                    if player.nivel == 4:
+                        running = False
                 if player.state == "dead":  # Se o personagem tiver caido ou sem vidas...
                     if event.type == pygame.MOUSEBUTTONDOWN:  # ... quando clicar com o botão do mouse...
                         pos_mouse = pygame.mouse.get_pos()  # ... Checa a posição, e se tiver dentro
                         # da área de um dos botões, executa a função desse botão
                         if 110 < pos_mouse[0] < 210 and 300 < pos_mouse[1] < 340:  # Botão de reiniciar
                             blocks = [first_block(mode)]  # Zera os blocos
+                            blocks[0].blocks_made[0] = 0
                             # Reseta o estado e as vidas do personagem
                             player.state = "still"
                             player.lives = 3
-                            player.num_stars
+                            player.num_stars = 0
                             player.player_y = player.original_y
                         elif 265 < pos_mouse[0] < 365 and 300 < pos_mouse[1] < 340:
                             game = False
@@ -59,39 +68,47 @@ def main():
                             blocks = []
                         elif 400 < pos_mouse[0] < 500 and 300 < pos_mouse[1] < 340:  # Botão de sair
                             running = False
-            if player.state == "dead" or player.state == "falling":  # Caso o personagem tenha morrido
-                paralax(screen, background, background_pos, 0)  # Executa a função que movimenta o plano de fundo
-                # Com velocidade 0, apenas para manter a posição do cenáio
+            if player.num_stars == 3:
+                paralax(screen, background, background_pos, 0)
                 for i in range(len(blocks)):
-                    blocks[i].show_static(screen)  # Mostra uma versão estática dos blocos
-                if player.state == "falling":  # Caso esteja caindo, vai diminuindo a posição do personagem no eixo y
-                    # E só depois dele sair da tela, que mostra o menu
-                    player.player_y += 6
-                    player.show(screen, blocks)
-                else:
-                    screen.blit(player.char_sprite, (player.player_x, player.player_y))  # Mostra o sprite do
-                    # personagem, onde ele morreu
-                    defeated_menu(screen)  # Mostra o menu de derrota
+                    blocks[i].show_static(screen)
+                next_level_menu(screen)
+            elif player.nivel == 4:
+                victory_screen(screen)
             else:
-                paralax(screen, background, background_pos)  # Executa a função que movimenta o plano de fundo
-                show_hearts_stars(screen, player)  # Executa a função que mostra os corações, que representam as
-                # vidas do personagem
-                # Mostra cada bloco
-                for i in range(len(blocks)):
-                    blocks[i].show(screen)
-                    if blocks[i].obst_pos and blocks[i].obst_pos[3]:
-                        # Checa se houve colisão do personagem com os obstáculos
-                        blocks[i].check_obst(player)
-                    if blocks[i].have_star:
-                        blocks[i].check_star(player)
-                player.show(screen, blocks)  # Mostra o personagem
-                if blocks:
-                    if blocks[len(blocks) - 1].create_other:  # Cria outro bloco
-                        block = Block(mode)
-                        blocks.append(block)
-                    if blocks[0].delete:  # Deleta o primeiro bloco se ele já tiver saído da tela
-                        del blocks[0]
-                player.check_fall(blocks)  # Checa se o jogador caiu
+                if player.state == "dead" or player.state == "falling":  # Caso o personagem tenha morrido
+                    paralax(screen, background, background_pos, 0)  # Executa a função que movimenta o plano de fundo
+                    # Com velocidade 0, apenas para manter a posição do cenáio
+                    for i in range(len(blocks)):
+                        blocks[i].show_static(screen)  # Mostra uma versão estática dos blocos
+                    if player.state == "falling":  # Caso esteja caindo, vai diminuindo a posição do personagem no eixo y
+                        # E só depois dele sair da tela, que mostra o menu
+                        player.player_y += 6
+                        player.show(screen, blocks)
+                    else:
+                        screen.blit(player.char_sprite, (player.player_x, player.player_y))  # Mostra o sprite do
+                        # personagem, onde ele morreu
+                        defeated_menu(screen)  # Mostra o menu de derrota
+                else:
+                    paralax(screen, background, background_pos)  # Executa a função que movimenta o plano de fundo
+                    show_acessories(screen, player)  # Executa a função que mostra os corações, que representam as
+                    # vidas do personagem
+                    # Mostra cada bloco
+                    for i in range(len(blocks)):
+                        blocks[i].show(screen, player)
+                        if blocks[i].obst_pos and blocks[i].obst_pos[3]:
+                            # Checa se houve colisão do personagem com os obstáculos
+                            blocks[i].check_obst(player)
+                        if blocks[i].have_star:
+                            blocks[i].check_star(player)
+                    player.show(screen, blocks)  # Mostra o personagem
+                    if blocks:
+                        if blocks[len(blocks) - 1].create_other:  # Cria outro bloco
+                            block = Block(mode)
+                            blocks.append(block)
+                        if blocks[0].delete:  # Deleta o primeiro bloco se ele já tiver saído da tela
+                            del blocks[0]
+                    player.check_fall(blocks)  # Checa se o jogador caiu
             pygame.display.update()
     pygame.quit()
 

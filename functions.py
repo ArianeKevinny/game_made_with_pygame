@@ -18,13 +18,16 @@ def transp_rec(width, height, color, transparency):
 
 
 # Mostra o número de vidas, utilizando corações
-def show_hearts_stars(screen, player):
+def show_acessories(screen, player):
     heart = pygame.image.load("img/heart.png")
     star = pygame.image.load("img/big star.png")
     for i in range(0, player.lives):
         screen.blit(heart, pos_heart[i])
     for i in range(player.num_stars):
         screen.blit(star, pos_star[i])
+    font = pygame.font.SysFont('Arial', 50)
+    nivel_text = font.render(f"Nível {player.nivel}", True, (255, 255, 255))
+    screen.blit(nivel_text, (236, 10))
 
 
 # Faz o primeiro bloco, que tem um tamanho maior que a maioria
@@ -162,8 +165,8 @@ def intro(screen):
     return bg_pos
 
 
-# Faz o menu
-def menu(screen, background_pos):
+# Faz o menu do início
+def menu_beginning(screen, background_pos):
     clock = pygame.time.Clock()
     b = True
     mode = ""
