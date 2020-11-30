@@ -2,6 +2,7 @@ import pygame
 from functions import *
 from menus import *
 from MyPlayer import Player
+from test_Testes import *
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
         if pre_game:
             [mode, char] = menu_beginning(screen, bg_pos)  # Função que mostra o menu
             if mode:
-                player = Player(char)  # Inicia o personagem 
+                player = Player(char)  # Inicia o personagem
                 # Os papéis de parede possuem diferentes tamanhos, então é preciso adaptar o tamanho para cada um deles
                 if mode == "city":
                     background_pos = [816, [0, 0], [-816, 0]]

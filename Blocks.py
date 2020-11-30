@@ -106,10 +106,6 @@ class Block:
 
     def check_star(self, player):
         """Checa se houve colisão do personagem com algum obstáculo"""
-        x_player = 0
-        x_star = 0
-        y_player = 0
-        y_star = 0
         # Checa se o personagem se chocou com um obstáculo
         x_player = self.star_pos[0] < player.player_x < self.star_pos[0] + self.star.get_width()
         y_player = self.star_pos[1] < player.player_y < self.star_pos[1] + self.star.get_height()
